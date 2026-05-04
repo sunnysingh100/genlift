@@ -97,7 +97,7 @@ export default function CTASection() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2 text-text-secondary">Full Name</label>
-                  <input id="name" type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  <input id="name" type="text" required maxLength={100} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl bg-bg-primary border border-border-subtle text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-blue transition-colors"
                     placeholder="John Doe" />
                 </div>
@@ -110,7 +110,7 @@ export default function CTASection() {
                   </div>
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium mb-2 text-text-secondary">Phone</label>
-                    <input id="phone" type="tel" required value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    <input id="phone" type="tel" required maxLength={20} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl bg-bg-primary border border-border-subtle text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-blue transition-colors"
                       placeholder="+91 98765 43210" />
                   </div>
@@ -125,7 +125,7 @@ export default function CTASection() {
                 </div>
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium mb-2 text-text-secondary">Tell us about your needs</label>
-                  <textarea id="message" rows={4} required value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  <textarea id="message" rows={4} required maxLength={2000} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl bg-bg-primary border border-border-subtle text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-blue transition-colors resize-none"
                     placeholder="e.g., We need an agent to handle inbound support calls..." />
                 </div>

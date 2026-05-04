@@ -1,4 +1,3 @@
-import Link from "next/link";
 import GenliftLogo from "./GenliftLogo";
 
 const footerLinks = {
@@ -28,7 +27,7 @@ export default function Footer() {
             </div>
             <p className="text-sm text-text-secondary max-w-sm leading-relaxed mb-6">
               We build and deploy custom AI voice agents for small and
-              medium-sized businesses — helping you automate calls, capture
+              medium-sized businesses - helping you automate calls, capture
               leads, and scale effortlessly.
             </p>
             <div className="flex gap-4">
@@ -64,7 +63,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="mt-16 pt-8 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-text-muted">© 2026 Genlift. All rights reserved.</p>
+          <p className="text-sm text-text-muted">&copy; 2026 Genlift. All rights reserved.</p>
           <p className="text-sm text-text-muted">
             <a href="mailto:sunny@genlift.online" className="hover:text-accent-cyan transition-colors">sunny@genlift.online</a>
           </p>

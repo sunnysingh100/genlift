@@ -89,7 +89,7 @@ export default function Hero() {
           className="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-in-up"
           style={{ animationDelay: "0.2s" }}
         >
-          We build custom AI voice agents for your business — handling calls,
+          We build custom AI voice agents for your business - handling calls,
           qualifying leads, and booking appointments 24/7 with human-like
           conversations.
         </p>
@@ -114,7 +114,7 @@ export default function Hero() {
         >
           <div className="glass-card p-8 sm:p-12 relative overflow-hidden">
             {/* Simulated voice waveform */}
-            <div className="flex items-end justify-center gap-[3px] h-24">
+            <div className="flex items-end justify-center gap-[3px] h-24" aria-hidden="true">
               {WAVEFORM_BARS.map(([height, dur], i) => {
                 const opacity = +(0.4 + Math.sin(i * 0.3) * 0.4).toFixed(4);
                 return (

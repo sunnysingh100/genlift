@@ -6,42 +6,34 @@ const industries = [
   {
     name: "Real Estate",
     description: "Qualify leads, schedule property viewings, and follow up with buyers automatically.",
-    icon: "🏠",
   },
   {
     name: "Healthcare",
     description: "Handle appointment bookings, prescription reminders, and patient follow-ups.",
-    icon: "🏥",
   },
   {
     name: "E-Commerce",
     description: "Manage order inquiries, track shipments, and handle return requests effortlessly.",
-    icon: "🛒",
   },
   {
     name: "Restaurants",
     description: "Take reservations, process orders, and handle delivery inquiries over the phone.",
-    icon: "🍽️",
   },
   {
     name: "Legal Services",
     description: "Screen potential clients, schedule consultations, and handle intake calls.",
-    icon: "⚖️",
   },
   {
     name: "Insurance",
     description: "Qualify prospects, process claims inquiries, and manage policy renewals.",
-    icon: "🛡️",
   },
   {
     name: "Automotive",
     description: "Book test drives, handle service appointments, and manage recall notifications.",
-    icon: "🚗",
   },
   {
     name: "Education",
     description: "Answer enrollment questions, schedule campus tours, and support student services.",
-    icon: "🎓",
   },
 ];
 
@@ -90,9 +82,6 @@ export default function Industries() {
               }`}
               style={{ transitionDelay: `${i * 80}ms` }}
             >
-              <span className="text-3xl mb-4 block transition-transform duration-300 group-hover:scale-125">
-                {industry.icon}
-              </span>
               <h3
                 className="text-lg font-bold mb-2"
                 style={{ fontFamily: "var(--font-heading)" }}
