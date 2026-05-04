@@ -1,0 +1,22 @@
+{
+  "name": "Genlift — Custom AI Voice Agents",
+  "short_name": "Genlift",
+  "description": "We build and deploy custom AI voice agents for small and medium-sized businesses.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050816",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
