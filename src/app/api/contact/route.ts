@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     // CSRF: Validate request origin in production
     const origin = req.headers.get("origin");
     const isLocalDev = process.env.NODE_ENV === "development";
-    if (!isLocalDev && origin && !ALLOWED_ORIGINS.includes(origin)) {
+    if (!isLocalDev && (!origin || !ALLOWED_ORIGINS.includes(origin))) {
       return NextResponse.json({ error: "Forbidden." }, { status: 403 });
     }
 
@@ -72,8 +72,8 @@ export async function POST(req: NextRequest) {
     if (!industry || !VALID_INDUSTRIES.includes(industry)) {
       return NextResponse.json({ error: "Invalid industry." }, { status: 400 });
     }
-    if (!message || typeof message !== "string" || message.length > 2000) {
-      return NextResponse.json({ error: "Message too long (max 2000 chars)." }, { status: 400 });
+    if (!message || typeof message !== "string" || message.trim().length < 1 || message.length > 2000) {
+      return NextResponse.json({ error: "Message is required (max 2000 chars)." }, { status: 400 });
     }
 
     // Rate limiting using client IP address.
@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
     const {error} = await resend.emails.send({
       from: "Genlift Contact Form <hello@genlift.online>",
       to: process.env.CONTACT_EMAIL ?? "sunny@genlift.online",
-      subject: `[New Lead] ${cleanForHeader(safeName)} - ${cleanForHeader(safeIndustry)}`,
+      subject: `[New Lead] ${cleanForHeader(name.trim())} - ${cleanForHeader(industry)}`,
       replyTo: email,  // Use raw validated email (not HTML-escaped, which would break '&' in addresses)
       html: `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0f1c; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b;">
@@ -189,7 +189,7 @@ export async function POST(req: NextRequest) {
         </div>
       `,
       })
-      .catch((e) => console.error("Confirmation email error:", e));
+      .catch((e) => console.warn("[ALERT] Confirmation email failed for:", email, "Error:", e));
 
     // waitUntil extends serverless execution past the response, ensuring the email send completes.
     // Available in Next.js 15+ on Vercel. Falls back to best-effort on other platforms.

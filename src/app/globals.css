@@ -21,8 +21,8 @@
   --color-border-accent: rgba(59, 130, 246, 0.3);
 
   /* ── Fonts ── */
-  --font-heading: "Outfit", sans-serif;
-  --font-body: "Inter", sans-serif;
+  --font-heading: var(--font-outfit), "Outfit", sans-serif;
+  --font-body: var(--font-inter), "Inter", sans-serif;
 
   /* ── Spacing Scale ── */
   --spacing-section: 6rem;
@@ -114,6 +114,7 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
   font-family: var(--font-body);
   font-size: 1rem;
+  isolation: isolate;
 }
 
 .btn-primary::before {
@@ -123,6 +124,7 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(135deg, var(--color-accent-cyan), var(--color-accent-blue));
   opacity: 0;
   transition: opacity 0.3s var(--ease-smooth);
+  z-index: -1;
 }
 
 .btn-primary:hover {
@@ -132,11 +134,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary:hover::before {
   opacity: 1;
-}
-
-.btn-primary span {
-  position: relative;
-  z-index: 1;
 }
 
 /* ── Ghost Button ── */

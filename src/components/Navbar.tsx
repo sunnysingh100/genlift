@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import GenliftLogo from "./GenliftLogo";
 
 const navLinks = [
@@ -15,11 +15,28 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const closeMenu = useCallback(() => setMobileMenuOpen(false), []);
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileMenuOpen]);
+
+  // Close mobile menu on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && mobileMenuOpen) closeMenu();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [mobileMenuOpen, closeMenu]);
 
   return (
     <nav
@@ -53,7 +70,9 @@ export default function Navbar() {
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="md:hidden flex flex-col gap-1.5 p-2"
-          aria-label="Toggle menu"
+          aria-label="Toggle navigation menu"
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-menu"
         >
           <span
             className={`w-6 h-0.5 bg-text-primary transition-all duration-300 ${
@@ -75,6 +94,8 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
+        id="mobile-menu"
+        role="menu"
         className={`md:hidden absolute top-full left-0 right-0 bg-bg-secondary border-b border-border-subtle backdrop-blur-xl transition-all duration-500 ${
           mobileMenuOpen
             ? "opacity-100 translate-y-0 pointer-events-auto"
@@ -86,7 +107,8 @@ export default function Navbar() {
             <a
               key={link.label}
               href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
+              role="menuitem"
+              onClick={closeMenu}
               className="text-text-secondary hover:text-text-primary transition-colors duration-300 py-2"
             >
               {link.label}
@@ -96,7 +118,8 @@ export default function Navbar() {
             href="https://cal.com/sunny-singh/quick-chat"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => setMobileMenuOpen(false)}
+            role="menuitem"
+            onClick={closeMenu}
             className="btn-primary text-center mt-2"
           >
             <span>Book a Call</span>

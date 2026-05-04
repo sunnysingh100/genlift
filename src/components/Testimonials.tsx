@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useInView } from "@/hooks/useInView";
 
 const testimonials = [
   {
@@ -39,20 +39,10 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export default function Testimonials() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setInView(true); },
-      { threshold: 0.1 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const [sectionRef, inView] = useInView(0.1);
 
   return (
-    <section ref={sectionRef} className="relative py-24 sm:py-32 bg-bg-secondary">
+    <section id="testimonials" ref={sectionRef} className="relative py-24 sm:py-32 bg-bg-secondary">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-20">
           <span className="text-sm font-semibold tracking-widest uppercase text-accent-cyan">Testimonials</span>

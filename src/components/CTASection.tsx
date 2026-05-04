@@ -38,6 +38,7 @@ export default function CTASection() {
         throw new Error(data.error || "Something went wrong.");
       }
 
+      setFormData({ name: "", email: "", phone: "", industry: "", message: "" });
       setSubmitted(true);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to send message. Please try again.";
@@ -117,11 +118,16 @@ export default function CTASection() {
                 </div>
                 <div>
                   <label htmlFor="industry" className="block text-sm font-medium mb-2 text-text-secondary">Industry</label>
-                  <select id="industry" required value={formData.industry} onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-bg-primary border border-border-subtle text-text-primary focus:outline-none focus:border-accent-blue transition-colors appearance-none cursor-pointer">
-                    <option value="" disabled>Select your industry</option>
-                    {industryOptions.map((opt) => (<option key={opt} value={opt}>{opt}</option>))}
-                  </select>
+                  <div className="relative">
+                    <select id="industry" required value={formData.industry} onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+                      className="w-full px-4 py-3 pr-10 rounded-xl bg-bg-primary border border-border-subtle text-text-primary focus:outline-none focus:border-accent-blue transition-colors appearance-none cursor-pointer">
+                      <option value="" disabled>Select your industry</option>
+                      {industryOptions.map((opt) => (<option key={opt} value={opt}>{opt}</option>))}
+                    </select>
+                    <svg className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </div>
                 </div>
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium mb-2 text-text-secondary">Tell us about your needs</label>

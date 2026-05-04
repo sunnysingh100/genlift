@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useInView } from "@/hooks/useInView";
 
 const differentiators = [
   { title: "Custom-Built, Not Cookie-Cutter", description: "Every agent is designed from scratch for your specific business — not a generic template.", icon: "⭐" },
@@ -12,17 +12,7 @@ const differentiators = [
 ];
 
 export default function WhyGenlift() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setInView(true); },
-      { threshold: 0.1 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const [sectionRef, inView] = useInView(0.1);
 
   return (
     <section id="why-genlift" ref={sectionRef} className="relative py-24 sm:py-32">

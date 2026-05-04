@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useInView } from "@/hooks/useInView";
 
 const stats = [
   { value: 50, suffix: "+", label: "Voice Agents Deployed" },
@@ -49,19 +50,7 @@ function AnimatedCounter({
 }
 
 export default function ProofBar() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setInView(true);
-      },
-      { threshold: 0.3 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
+  const [ref, inView] = useInView(0.3);
 
   return (
     <section ref={ref} className="relative py-16 border-y border-border-subtle">
