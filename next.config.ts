@@ -1,3 +1,4 @@
+import { withDualmark } from "@dualmark/nextjs";
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -36,4 +37,6 @@ const nextConfig: NextConfig = {
   ],
 };
 
-export default nextConfig;
+export default withDualmark(nextConfig, {
+  siteUrl: "https://genlift.online",
+});
