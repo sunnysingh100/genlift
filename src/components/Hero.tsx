@@ -55,7 +55,7 @@ export default function Hero() {
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 text-center">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border-accent bg-[rgba(59,130,246,0.06)] mb-8 animate-fade-in-up">
           <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse-glow" />
@@ -66,13 +66,13 @@ export default function Hero() {
 
         {/* Headline */}
         <h1
-          className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold leading-[1.1] tracking-tight mb-8 animate-fade-in-up"
+          className="text-[2rem] min-[380px]:text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold leading-[1.12] sm:leading-[1.1] tracking-tight mb-6 sm:mb-8 animate-fade-in-up"
           style={{ fontFamily: "var(--font-heading)", animationDelay: "0.1s" }}
         >
           <span className="block">AI Voice Agents That</span>
-          <span className="block h-[1.15em] relative overflow-hidden">
+          <span className="block h-[1.2em] sm:h-[1.15em] relative overflow-hidden">
             <span
-              className="inline-block gradient-text transition-all duration-400 ease-in-out"
+              className="inline-block max-w-full whitespace-nowrap gradient-text drop-shadow-[0_0_20px_rgba(6,182,212,0.25)] transition-all duration-400 ease-in-out"
               style={{
                 transform: isAnimating ? "translateY(-100%)" : "translateY(0)",
                 opacity: isAnimating ? 0 : 1,
