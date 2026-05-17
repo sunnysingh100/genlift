@@ -1,17 +1,33 @@
-import {NextRequest, NextResponse} from "next/server";
+import {after, NextRequest, NextResponse} from "next/server";
 import {Resend} from "resend";
 import {Ratelimit} from "@upstash/ratelimit";
 import {Redis} from "@upstash/redis";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resendClient: Resend | null = null;
+let ratelimitClient: Ratelimit | null = null;
 
-// Distributed rate limiter backed by Upstash Redis.
-// Works correctly across serverless instances and survives cold starts.
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(), // reads UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN
-  limiter: Ratelimit.slidingWindow(3, "15 m"), // 3 requests per 15 minutes per key
-  analytics: true,
-});
+function getResendClient(): Resend | null {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  resendClient ??= new Resend(apiKey);
+  return resendClient;
+}
+
+function getRatelimitClient(): Ratelimit | null {
+  const hasUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const hasToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  if (!hasUrl || !hasToken) return null;
+
+  // Distributed rate limiter backed by Upstash Redis.
+  // Works correctly across serverless instances and survives cold starts.
+  ratelimitClient ??= new Ratelimit({
+    redis: Redis.fromEnv(), // reads UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN
+    limiter: Ratelimit.slidingWindow(3, "15 m"), // 3 requests per 15 minutes per key
+    analytics: true,
+  });
+
+  return ratelimitClient;
+}
 
 // Allowed origins for CSRF protection
 const ALLOWED_ORIGINS = [
@@ -56,24 +72,43 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden." }, { status: 403 });
     }
 
-    const body = await req.json();
-    const {name, email, phone, industry, message} = body;
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON." }, { status: 400 });
+    }
+
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+    }
+
+    const {name, email, phone, industry, message} = body as Record<string, unknown>;
 
     // Strict validation
     if (!name || typeof name !== "string" || name.trim().length < 2 || name.length > 100) {
       return NextResponse.json({ error: "Invalid name." }, { status: 400 });
     }
-    if (!email || !EMAIL_REGEX.test(email)) {
+    if (!email || typeof email !== "string" || !EMAIL_REGEX.test(email)) {
       return NextResponse.json({ error: "Invalid email." }, { status: 400 });
     }
     if (!phone || typeof phone !== "string" || !PHONE_REGEX.test(phone)) {
       return NextResponse.json({ error: "Invalid phone number." }, { status: 400 });
     }
-    if (!industry || !VALID_INDUSTRIES.includes(industry)) {
+    if (!industry || typeof industry !== "string" || !VALID_INDUSTRIES.includes(industry)) {
       return NextResponse.json({ error: "Invalid industry." }, { status: 400 });
     }
     if (!message || typeof message !== "string" || message.trim().length < 1 || message.length > 2000) {
       return NextResponse.json({ error: "Message is required (max 2000 chars)." }, { status: 400 });
+    }
+
+    const resend = getResendClient();
+    if (!resend) {
+      console.error("Contact form email is not configured: missing RESEND_API_KEY.");
+      return NextResponse.json(
+        {error: "Contact form is not configured. Please try again later."},
+        {status: 500},
+      );
     }
 
     // Rate limiting using client IP address.
@@ -81,6 +116,15 @@ export async function POST(req: NextRequest) {
     // and cannot be spoofed — Vercel overwrites any client-supplied value.
     const forwardedFor = req.headers.get("x-forwarded-for");
     const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : "unknown-ip";
+    const ratelimit = getRatelimitClient();
+    if (!ratelimit) {
+      console.error("Contact form rate limiting is not configured: missing Upstash Redis credentials.");
+      return NextResponse.json(
+        {error: "Contact form is not configured. Please try again later."},
+        {status: 500},
+      );
+    }
+
     const { success, remaining } = await ratelimit.limit(ip);
     if (!success) {
       return NextResponse.json(
@@ -93,18 +137,24 @@ export async function POST(req: NextRequest) {
     }
 
     // Sanitize input
-    const safeName = escapeHtml(name);
-    const safeEmail = escapeHtml(email);
-    const safePhone = escapeHtml(phone);
-    const safeIndustry = escapeHtml(industry);
-    const safeMessage = escapeHtml(message);
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedIndustry = industry.trim();
+    const trimmedMessage = message.trim();
+
+    const safeName = escapeHtml(trimmedName);
+    const safeEmail = escapeHtml(trimmedEmail);
+    const safePhone = escapeHtml(trimmedPhone);
+    const safeIndustry = escapeHtml(trimmedIndustry);
+    const safeMessage = escapeHtml(trimmedMessage);
 
     // Send notification email to you
     const {error} = await resend.emails.send({
       from: "Genlift Contact Form <hello@genlift.online>",
       to: process.env.CONTACT_EMAIL ?? "sunny@genlift.online",
-      subject: `[New Lead] ${cleanForHeader(name.trim())} - ${cleanForHeader(industry)}`,
-      replyTo: email,  // Use raw validated email (not HTML-escaped, which would break '&' in addresses)
+      subject: `[New Lead] ${cleanForHeader(trimmedName)} - ${cleanForHeader(trimmedIndustry)}`,
+      replyTo: trimmedEmail,  // Use raw validated email (not HTML-escaped, which would break '&' in addresses)
       html: `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0f1c; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b;">
           <div style="background: linear-gradient(135deg, #2563eb, #06b6d4); padding: 32px 24px;">
@@ -160,14 +210,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Fire-and-forget: send confirmation email to the lead without blocking the response.
-    // Use waitUntil to ensure the promise completes even after the response is sent.
-    const confirmPromise = resend.emails
-      .send({
-        from: "Genlift <hello@genlift.online>",
-        to: [email], // Already validated by EMAIL_REGEX above
-        subject: "We got your message! - Genlift",
-        html: `
+    // Schedule confirmation after the response while keeping serverless execution alive.
+    after(async () => {
+      try {
+        await resend.emails.send({
+          from: "Genlift <hello@genlift.online>",
+          to: [trimmedEmail], // Already validated by EMAIL_REGEX above
+          subject: "We got your message! - Genlift",
+          html: `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0f1c; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b;">
           <div style="background: linear-gradient(135deg, #2563eb, #06b6d4); padding: 32px 24px;">
             <h1 style="color: white; margin: 0; font-size: 24px;">Thanks for reaching out, ${safeName}!</h1>
@@ -188,14 +238,11 @@ export async function POST(req: NextRequest) {
           </div>
         </div>
       `,
-      })
-      .catch((e) => console.warn("[ALERT] Confirmation email failed for:", email, "Error:", e));
-
-    // waitUntil extends serverless execution past the response, ensuring the email send completes.
-    // Available in Next.js 15+ on Vercel. Falls back to best-effort on other platforms.
-    if ("waitUntil" in req) {
-      (req as unknown as { waitUntil: (p: Promise<unknown>) => void }).waitUntil(confirmPromise);
-    }
+        });
+      } catch (e) {
+        console.warn("[ALERT] Confirmation email failed for:", trimmedEmail, "Error:", e);
+      }
+    });
 
     return NextResponse.json(
       {success: true, message: "Message sent successfully!"},

@@ -1,20 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-inter",
-});
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-outfit",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://genlift.online"),
@@ -77,7 +62,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`h-full antialiased ${inter.variable} ${outfit.variable}`}
+      className="h-full antialiased"
     >
       <body className="min-h-full flex flex-col font-sans" style={{ fontFamily: "var(--font-body)" }}>
         {children}

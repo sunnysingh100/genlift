@@ -6,7 +6,7 @@ import { useInView } from "@/hooks/useInView";
 const stats = [
   { value: 50, suffix: "+", label: "Voice Agents Deployed" },
   { value: 24, suffix: "/7", label: "Availability" },
-  { value: 1, prefix: "<", suffix: "s", label: "Response Time" },
+  { value: 1, prefix: "<", suffix: "s", label: "Response Time", animate: false },
   { value: 10, suffix: "+", label: "Industries Served" },
 ];
 
@@ -15,16 +15,18 @@ function AnimatedCounter({
   prefix,
   suffix,
   inView,
+  animate = true,
 }: {
   value: number;
   prefix?: string;
   suffix?: string;
   inView: boolean;
+  animate?: boolean;
 }) {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(animate ? 0 : value);
 
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || !animate) return;
     let start = 0;
     const duration = 2000;
     const increment = value / (duration / 16);
@@ -38,7 +40,7 @@ function AnimatedCounter({
       }
     }, 16);
     return () => clearInterval(timer);
-  }, [inView, value]);
+  }, [animate, inView, value]);
 
   return (
     <span className="text-4xl sm:text-5xl font-bold gradient-text" style={{ fontFamily: "var(--font-heading)" }}>
@@ -64,6 +66,7 @@ export default function ProofBar() {
                 prefix={stat.prefix}
                 suffix={stat.suffix}
                 inView={inView}
+                animate={stat.animate}
               />
               <p className="mt-2 text-sm text-text-muted uppercase tracking-wider">
                 {stat.label}

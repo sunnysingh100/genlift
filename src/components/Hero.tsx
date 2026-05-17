@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const rotatingPhrases = [
   "Close Deals",
@@ -23,17 +23,22 @@ const WAVEFORM_BARS: [number, number][] = Array.from({ length: 40 }, (_, i) => {
 export default function Hero() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setIsAnimating(true);
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setCurrentIndex((prev) => (prev + 1) % rotatingPhrases.length);
         setIsAnimating(false);
+        timeoutRef.current = null;
       }, 400);
     }, 2500);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, []);
 
   return (

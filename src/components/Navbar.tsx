@@ -96,6 +96,8 @@ export default function Navbar() {
       <div
         id="mobile-menu"
         role="menu"
+        hidden={!mobileMenuOpen}
+        aria-hidden={!mobileMenuOpen}
         className={`md:hidden absolute top-full left-0 right-0 bg-bg-secondary border-b border-border-subtle backdrop-blur-xl transition-all duration-500 ${
           mobileMenuOpen
             ? "opacity-100 translate-y-0 pointer-events-auto"
