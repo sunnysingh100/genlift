@@ -1,3 +1,4 @@
+import Link from "next/link";
 import GenliftLogo from "./GenliftLogo";
 
 const footerLinks = {
@@ -12,6 +13,7 @@ const footerLinks = {
     { label: "Industries", href: "#industries" },
     { label: "Why Genlift", href: "#why-genlift" },
     { label: "Contact", href: "#contact" },
+    { label: "Privacy Policy", href: "/privacy" },
   ],
 };
 
@@ -40,9 +42,9 @@ export default function Footer() {
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               </a>
               {/* Email */}
-              <a href="mailto:sunny@genlift.online" aria-label="Email" className="w-9 h-9 rounded-lg border border-border-subtle flex items-center justify-center text-text-muted hover:text-accent-cyan hover:border-border-accent transition-all">
+              <Link href="mailto:sunny@genlift.online" aria-label="Email" className="w-9 h-9 rounded-lg border border-border-subtle flex items-center justify-center text-text-muted hover:text-accent-cyan hover:border-border-accent transition-all">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -64,9 +66,10 @@ export default function Footer() {
         {/* Bottom */}
         <div className="mt-16 pt-8 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-text-muted">&copy; 2026 Genlift. All rights reserved.</p>
-          <p className="text-sm text-text-muted">
-            <a href="mailto:sunny@genlift.online" className="hover:text-accent-cyan transition-colors">sunny@genlift.online</a>
-          </p>
+          <div className="flex items-center gap-6">
+            <Link href="/privacy" className="text-sm text-text-muted hover:text-accent-cyan transition-colors">Privacy Policy</Link>
+            <Link href="mailto:sunny@genlift.online" className="text-sm text-text-muted hover:text-accent-cyan transition-colors">sunny@genlift.online</Link>
+          </div>
         </div>
       </div>
     </footer>
