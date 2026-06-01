@@ -15,6 +15,21 @@ export const metadata: Metadata = {
     url: "https://genlift.online/privacy",
     siteName: "Genlift",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Genlift - Custom AI Voice Agents for Your Business",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy - Genlift",
+    description:
+      "Learn how Genlift collects, uses, and protects your personal information.",
+    images: ["/og-image.png"],
   },
 };
 
