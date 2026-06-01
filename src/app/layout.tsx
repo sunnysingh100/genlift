@@ -17,7 +17,8 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: [
-      { url: "/genlift-logo.png", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/genlift-logo.png", type: "image/png", sizes: "512x512" },
     ],
     apple: [
       { url: "/genlift-logo.png", sizes: "180x180", type: "image/png" },
