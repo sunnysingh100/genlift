@@ -118,6 +118,6 @@ Ready to automate your customer calls? Tell us about your business and we'll sho
   ],
 });
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 export const GET = handler.GET;
 export const generateStaticParams = handler.generateStaticParams;
